@@ -20,7 +20,7 @@ COPT =		-O3
 # Linux distros).
 
 #CMODEL =
-CMODEL =	-m32
+#CMODEL =	-m32
 
 CFLAGS =	$(COPT) $(CMODEL)
 
@@ -45,17 +45,17 @@ BINARY =	nicstat
 NATIVE_BINARY =	`./nicstat.sh --bin-name`
 
 
-all : $(FILES)
+all: $(FILES)
 	mv $? $(NATIVE_BINARY)
 
-$(NATIVE_BINARY) : $(BINARY)
+$(NATIVE_BINARY): $(BINARY)
 	mv $? $@
 
 #-- Choose one of these two install methods:
-install : install_native install_man
-#install : install_multi_platform install_man
+install: install_native install_man
+#install: install_multi_platform install_man
 
-install_native : $(BINARIES)
+install_native: $(BINARIES)
 	$(SETUINSTALL) $(NATIVE_BINARY) $(BINDIR)/$(BINARY)
 	$(INSTALL) -m 555 enicstat $(BINDIR)
 
@@ -64,7 +64,7 @@ install_native : $(BINARIES)
 # binaries need setuid-root if they are to use the SIOCETHTOOL ioctl
 # (which is optional, see the man page)
 #
-install_multi_platform : $(NATIVE_BINARY) enicstat
+install_multi_platform: $(NATIVE_BINARY) enicstat
 	$(INSTALL) -m 755 nicstat.sh $(BINDIR)/nicstat
 	$(INSTALL) -m 555 enicstat $(BINDIR)
 	sudo cp -p .nicstat.* $(MP_DIR)
@@ -74,8 +74,8 @@ install_multi_platform : $(NATIVE_BINARY) enicstat
 install_man: nicstat.1
 	$(INSTALL) -m 444 nicstat.1 $(MANDIR)/man1/nicstat.1
 
-lint :
+lint:
 	lint $(SOURCES) $(LDLIBS)
 
-clean :
-	rm -f $(FILES)
+clean:
+	rm -f $(FILES) .nicstat.*
