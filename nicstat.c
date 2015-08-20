@@ -1566,7 +1566,7 @@ load_snmp(FILE *snmp)
 			n = fscanf(snmp, "Udp: %lld %lld %lld %lld "
 			    "%lld %lld\n",
 			    &ll[0], &ll[1], &ll[2], &ll[3],
-			    &ll[4], &ll[5], &ll[6]);
+			    &ll[4], &ll[5]);
 			if (n == 6) {
 				g_udp_new->inDatagrams = ll[0];
 				g_udp_new->outDatagrams = ll[3];
@@ -1637,8 +1637,10 @@ update_stats(int net_dev)
 	 */
 	if (lseek(net_dev, 0, SEEK_SET) != 0)
 		die(1, "lseek: %s", PROC_NET_DEV_PATH);
-	bufsiz = read(net_dev, (void *) proc_net_buffer,
-	    sizeof (proc_net_buffer));
+	bufsiz = 0;
+	while ((n = read(net_dev, (void *) proc_net_buffer + bufsiz, sizeof(proc_net_buffer) - bufsiz)) > 0) {
+	    bufsiz += n;
+	}
 	if (bufsiz < 0)
 		die(1, "read: %s", PROC_NET_DEV_PATH);
 	else if (bufsiz < 200)
